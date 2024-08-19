@@ -12,14 +12,15 @@ class Countdowner extends StatefulWidget {
 
 class _Countdowner extends State<Countdowner> {
   final CountDownController _controller = CountDownController();
+  bool _running = true;
   int count = 0;
-
   List<Widget> fiveTimers = [];
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    fiveTimers.add(fiveTimer(count));
 
     // 5분마다 fiveTimer를 생성
     _timer = Timer.periodic(
@@ -39,6 +40,18 @@ class _Countdowner extends State<Countdowner> {
         );
       },
     );
+  }
+
+  void conversion() {
+    if (_running == true) {
+      _controller.pause();
+    } else {
+      _controller.resume();
+    }
+
+    setState(() {
+      _running = !_running;
+    });
   }
 
   Widget basicTimer() {
@@ -92,9 +105,9 @@ class _Countdowner extends State<Countdowner> {
               height: 40,
             ),
             IconButton(
-              onPressed: () => _controller.pause,
-              icon: const Icon(
-                Icons.stop,
+              onPressed: conversion,
+              icon: Icon(
+                _running ? Icons.stop : Icons.play_arrow,
               ),
             ),
           ],
