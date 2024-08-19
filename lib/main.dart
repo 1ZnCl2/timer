@@ -12,6 +12,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
+        backgroundColor: Color(0xFF2D2D2D),
         body: Center(
           child: Countdowner(),
         ),
