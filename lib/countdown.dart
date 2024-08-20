@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'dart:math';
 import 'dart:async';
+import 'package:timer3/navigator_button.dart';
 
 class Countdowner extends StatefulWidget {
   const Countdowner({super.key});
@@ -23,17 +24,18 @@ class _Countdowner extends State<Countdowner> {
     super.initState();
     fiveTimers.add(firstFive(count));
 
-    // 5분마다 fiveTimer를 생성
+    // 5분마다 fiveTimer를 생성합니다
     _timer = Timer.periodic(
       const Duration(minutes: 5),
       (timer) {
         setState(
           () {
             if (count < 4) {
+              // 5분이 지날 때마다 count가 올라갑니다.
               count++;
               fiveTimers.add(fiveTimer(count));
             } else {
-              // 타이머를 최대 4번 생성 후 초기화
+              // 타이머를 최대 4번 생성한 후 초기화합니다.
               count = 0;
               fiveTimers.clear();
             }
@@ -59,6 +61,7 @@ class _Countdowner extends State<Countdowner> {
     });
   }
 
+  // 아래에 깔릴 basic timer입니다.
   Widget basicTimer() {
     return CircularCountDownTimer(
       width: 200,
@@ -80,6 +83,8 @@ class _Countdowner extends State<Countdowner> {
     );
   }
 
+  // 소현님께서 원하시는 게 트리거와 분리하는 것 같아서 first five minute timer를 만들었습니다.
+  // firstFive는 최초 한 번만 호출됩니다.
   Widget firstFive(int count) {
     return Transform.rotate(
       angle: 2 * (4 - count) * pi / 5,
@@ -100,8 +105,10 @@ class _Countdowner extends State<Countdowner> {
     );
   }
 
+  // first five timer 이후에 호출되는 5분짜리 타이머입니다.
   Widget fiveTimer(int count) {
     return Transform.rotate(
+      // 5분이 지날 때마다 각도가 달라지도록 설정했습니다.
       angle: 2 * (4 - count) * pi / 5,
       child: CircularCountDownTimer(
         width: 200,
@@ -154,12 +161,12 @@ class _Countdowner extends State<Countdowner> {
                 }
                 showGeneralDialog(
                   context: context,
-                  barrierDismissible: true, // 사용자가 다이얼로그 바깥을 누르면 창을 닫음
+                  barrierDismissible: true, // 사용자가 다이얼로그 바깥을 누르면 창을 닫습니다
                   barrierLabel: "",
                   barrierColor:
-                      Colors.black.withOpacity(0.5), // 배경을 반투명 검은색으로 설정
+                      Colors.black.withOpacity(0.5), // 배경을 반투명 검은색으로 설정합니다
                   transitionDuration:
-                      const Duration(milliseconds: 200), // 애니메이션 시간
+                      const Duration(milliseconds: 200), // 애니메이션 시간입니다
                   pageBuilder: (context, animation1, animation2) {
                     return Center(
                       child: Container(
@@ -186,26 +193,8 @@ class _Countdowner extends State<Countdowner> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context); // 버튼을 누르면 다이얼로그 닫기
-                                  },
-                                  icon: const Icon(
-                                    Icons.stop_circle,
-                                    color: Color(0xFFFF614C),
-                                    size: 40,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  icon: const Icon(
-                                    Icons.check_circle,
-                                    color: Color(0xFF8AC000),
-                                    size: 40,
-                                  ),
-                                ),
+                                naviIcon(color: const Color(0xFFFF614C)),
+                                naviIcon(color: const Color(0xFF8AC000)),
                                 IconButton(
                                   onPressed: () {
                                     Navigator.pop(context);

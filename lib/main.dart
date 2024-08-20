@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timer3/countdown.dart';
+import 'package:timer3/small_task.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,11 +11,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        backgroundColor: Color(0xFF2D2D2D),
+        backgroundColor: const Color(0xFF2D2D2D),
         body: Center(
-          child: Countdowner(),
+          child: Column(
+            children: [
+              const Countdowner(),
+              SmallTask(
+                list: const [
+                  'first',
+                  'second',
+                  'third',
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
