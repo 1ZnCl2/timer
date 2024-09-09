@@ -13,61 +13,72 @@ class Countdowner extends StatefulWidget {
 
 class _Countdowner extends State<Countdowner> {
   final List<CountDownController> _controllers =
-      List.generate(5, (_) => CountDownController());
+      List.generate(3, (_) => CountDownController());
   bool _running = true;
   int count = 0;
   List<Widget> fiveTimers = [];
   Timer? _timer;
+  int remainTime = 1500;
 
   @override
   void initState() {
     super.initState();
     fiveTimers.add(firstFive(count));
+    startTimer(); // 위젯이 생성될 때 자동으로 타이머를 시작합니다.
+  }
 
-    // 5분마다 fiveTimer를 생성합니다
+  void startTimer() {
     _timer = Timer.periodic(
-      const Duration(minutes: 5),
+      const Duration(seconds: 1),
       (timer) {
-        setState(
-          () {
-            if (count < 4) {
-              // 5분이 지날 때마다 count가 올라갑니다.
+        if (remainTime > 0 && _running) {
+          print("remainTime : $remainTime, count : $count");
+          remainTime--; // remainTime만 감소시킴
+          if (count < 4 && remainTime % 300 == 0) {
+            setState(() {
+              // 위젯 추가 시에만 setState를 호출
               count++;
               fiveTimers.add(fiveTimer(count));
-            } else {
-              // 타이머를 최대 4번 생성한 후 초기화합니다.
-              count = 0;
-              fiveTimers.clear();
-            }
-          },
-        );
+            });
+          }
+          setState(() {}); // 기본적인 상태 변경을 위해 호출
+        } else {
+          _timer?.cancel();
+          setState(() {
+            _running = false;
+          });
+        }
       },
     );
   }
 
-  void conversion() {
-    if (_running == true) {
-      for (var controller in _controllers) {
-        controller.pause();
-      }
-    } else {
-      for (var controller in _controllers) {
-        controller.resume();
-      }
-    }
+  void pauseTimer() {
+    _timer?.cancel();
 
-    setState(() {
-      _running = !_running;
-    });
+    setState(
+      () {
+        _running = false;
+      },
+    );
+  }
+
+  void resumeTimer() {
+    setState(
+      () {
+        _running = true;
+      },
+    );
+    startTimer();
   }
 
   // 아래에 깔릴 basic timer입니다.
-  Widget basicTimer() {
+  Widget basicTimer(int count) {
     return CircularCountDownTimer(
       width: 200,
       height: 200,
-      duration: 1500,
       controller: _controllers[0],
+      initialDuration: count * 300,
+      duration: 1500,
       fillColor: const Color(0xFFFFFFFF),
       ringColor: const Color(0xFF000000),
       strokeCap: StrokeCap.round,
@@ -83,7 +94,7 @@ class _Countdowner extends State<Countdowner> {
     );
   }
 
-  // 소현님께서 원하시는 게 트리거와 분리하는 것 같아서 first five minute timer를 만들었습니다.
+  // 소현님께서 원하시는 게 최초 5분 타이머는 트리거를 위한 5분인 것 같아서 first five minute timer를 만들었습니다.
   // firstFive는 최초 한 번만 호출됩니다.
   Widget firstFive(int count) {
     return Transform.rotate(
@@ -132,7 +143,7 @@ class _Countdowner extends State<Countdowner> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        basicTimer(),
+        basicTimer(count),
         ...fiveTimers,
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -156,15 +167,16 @@ class _Countdowner extends State<Countdowner> {
             // ),
             IconButton(
               onPressed: () {
+                pauseTimer();
                 for (var controller in _controllers) {
                   controller.pause();
                 }
+
                 showGeneralDialog(
                   context: context,
                   barrierDismissible: true, // 사용자가 다이얼로그 바깥을 누르면 창을 닫습니다
                   barrierLabel: "",
-                  barrierColor:
-                      Colors.black.withOpacity(0.5), // 배경을 반투명 검은색으로 설정합니다
+                  barrierColor: Colors.black.withOpacity(0.5),
                   transitionDuration:
                       const Duration(milliseconds: 200), // 애니메이션 시간입니다
                   pageBuilder: (context, animation1, animation2) {
@@ -193,11 +205,18 @@ class _Countdowner extends State<Countdowner> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                naviIcon(color: const Color(0xFFFF614C)),
-                                naviIcon(color: const Color(0xFF8AC000)),
+                                const NaviIcon(
+                                  color: Color(0xFFFF614C),
+                                  icon: Icons.stop_circle,
+                                ),
+                                const NaviIcon(
+                                  color: Color(0xFF8AC000),
+                                  icon: Icons.check_circle,
+                                ),
                                 IconButton(
                                   onPressed: () {
                                     Navigator.pop(context);
+                                    resumeTimer();
                                     for (var controller in _controllers) {
                                       controller.resume();
                                     }

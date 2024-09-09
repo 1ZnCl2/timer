@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-class naviIcon extends StatelessWidget {
-  naviIcon({
+class NaviIcon extends StatelessWidget {
+  const NaviIcon({
     super.key,
     required this.color,
+    required this.icon,
   });
 
-  Color color;
+  final Color color;
+  final IconData icon;
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -14,7 +17,7 @@ class naviIcon extends StatelessWidget {
         Navigator.pop(context); // 버튼을 누르면 다이얼로그 닫기
       },
       icon: Icon(
-        Icons.stop_circle,
+        icon,
         color: color,
         size: 40,
       ),

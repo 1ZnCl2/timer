@@ -9,8 +9,9 @@ class SmallTask extends StatelessWidget {
 
   List<Widget> listup(list) {
     List<Widget> buttons = [];
-    for (int i = 0; i < 10; i++) {
-      buttons = list.add(
+
+    for (int i = 0; i < 3; i++) {
+      buttons.add(
         ElevatedButton(
           onPressed: () {},
           child: Text(list[i]),
